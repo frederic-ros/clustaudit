@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this software or its result files, please cite the paper and the archived release."
+title: "clustaudit: interventional auditing of clustering algorithms"
+version: 2.2.0
+date-released: 2026-11-14
+license: MIT
+repository-code: "https://github.com/<owner>/clustaudit"
+authors:
+  - family-names: Ros
+    given-names: Frédéric
+    affiliation: "PRISME UR 4229, Orléans University, INSA-CVL"
+  - family-names: Riad
+    given-names: Rabia
+  - family-names: Nasser
+    given-names: Yassine
+keywords:
+  - clustering evaluation
+  - algorithm auditing
+  - synthetic data generation
+  - difficulty profile
+  - robustness
+preferred-citation:
+  type: article
+  title: "Interventional Auditing of Clustering Algorithms: Controlled Difficulty Sweeps Beyond Benchmarking"
+  authors:
+    - family-names: Ros
+      given-names: Frédéric
+    - family-names: Riad
+      given-names: Rabia
+    - family-names: Nasser
+      given-names: Yassine
+  status: submitted
+  year: 2026

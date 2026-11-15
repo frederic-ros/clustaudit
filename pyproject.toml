@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clustaudit"
+version = "2.2.0"
+description = "Interventional auditing of clustering algorithms: controlled generator, STATE representation, difficulty profile"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{name = "Frédéric Ros"}, {name = "Rabia Riad"}, {name = "Yassine Nasser"}]
+dependencies = ["numpy>=1.22", "scipy>=1.8", "scikit-learn>=1.3", "pandas>=1.5", "matplotlib>=3.6", "seaborn>=0.12", "pyyaml>=6"]
+
+[project.optional-dependencies]
+dbcv = ["hdbscan"]
+deep = ["clustpy", "torch"]
+crossgen = ["hawks", "mdcgenpy @ git+https://github.com/CN-TU/mdcgenpy"]
+figures = ["adjustText"]
+dev = ["pytest"]
+
+[project.urls]
+Repository = "https://github.com/<owner>/clustaudit"
+
+[project.scripts]
+clustaudit = "clustaudit.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["clustaudit*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,41 @@
+sweep,algorithm,ratio
+overlap $\sigma$,DBSCAN,0.931533811
+overlap $\sigma$,DPC,0.7996607035
+overlap $\sigma$,GMM,0.8091111072
+overlap $\sigma$,HDBSCAN,0.9503020068
+overlap $\sigma$,KMeans,1.047498838
+overlap $\sigma$,OPTICS,0.9969394075
+overlap $\sigma$,Spectral,0.8449701057
+overlap $\sigma$,Ward,0.8567274425
+anisotropy $\alpha$,DBSCAN,0.5981037972
+anisotropy $\alpha$,GMM,0.9772462605
+anisotropy $\alpha$,HDBSCAN,0.9295365618
+anisotropy $\alpha$,KMeans,0.6048078057
+anisotropy $\alpha$,OPTICS,0.9586328578
+anisotropy $\alpha$,Spectral,0.8700786368
+anisotropy $\alpha$,Ward,0.7289581249
+inter-density $\delta$,DBSCAN,0.7837063835
+inter-density $\delta$,DPC,0.6356228227
+inter-density $\delta$,GMM,0.6562188282
+inter-density $\delta$,HDBSCAN,0.5719547271
+inter-density $\delta$,KMeans,0.8485632202
+inter-density $\delta$,OPTICS,0.6219153907
+inter-density $\delta$,Spectral,0.7770824777
+inter-density $\delta$,Ward,0.20660841
+imbalance $\rho$,DBSCAN,0.8428063718
+imbalance $\rho$,DPC,0.8218528635
+imbalance $\rho$,GMM,0.8411275821
+imbalance $\rho$,HDBSCAN,1.020722293
+imbalance $\rho$,KMeans,0.5385081106
+imbalance $\rho$,OPTICS,1.082803026
+imbalance $\rho$,Spectral,0.9167391819
+imbalance $\rho$,Ward,0.6186438034
+noise placement $\eta_{\text{int}}$,Average,1
+noise placement $\eta_{\text{int}}$,DBSCAN,1.117685106
+noise placement $\eta_{\text{int}}$,DPC,1.016033023
+noise placement $\eta_{\text{int}}$,GMM,0.9564354646
+noise placement $\eta_{\text{int}}$,HDBSCAN,0.5978673845
+noise placement $\eta_{\text{int}}$,KMeans,0.9624055734
+noise placement $\eta_{\text{int}}$,OPTICS,0.9477664803
+noise placement $\eta_{\text{int}}$,Spectral,0.763346914
+noise placement $\eta_{\text{int}}$,Ward,0.9683278059

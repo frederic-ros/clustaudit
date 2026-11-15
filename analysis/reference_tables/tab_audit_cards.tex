@@ -1,0 +1,16 @@
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Method & $\sigma_{\text{crit}}$ & $\alpha_{\text{crit}}$ & $\delta_{\text{crit}}$ & noise placement & imbalance $\rho = 5$ & failure at $\sigma_{\max}$ \\
+ & [seed range] & [seed range] & [seed range] & ARI dist.\,/\,bridge & ARI / F1$_{\min}$ & mode (fraction) \\
+\midrule
+K-Means & 1 [0.8, 1] & 8 [5, $>$max] & $>$max [0.75, $>$max] & 0.04 / 1.00 & 0.89 / 0.06 & silent (1.00) \\
+GMM & 0.2 [0.2, 0.4] & 4 [1, 5] & 0 [0, $>$max] & 0.00 / 0.92 & 0.73 / 0.05 & silent (1.00) \\
+Spectral & 1.2 [1, 1.4] & 10 [8, 10] & $>$max [$>$max, $>$max] & 1.00 / 0.99 & 1.00 / 0.50 & silent (0.80) \\
+Ward & 0.4 [0.2, 0.8] & 6 [1, 6] & 0 [0, $>$max] & 0.00 / 0.97 & 0.87 / 0.04 & silent (1.00) \\
+Average & $\le 0.2$ & $\le 1$ & $\le 0$ & 0.00 / 0.97 & 0.00 / 0.02 & silent (1.00) \\
+DBSCAN & 0.4 [0.4, 0.4] & 2 [1, 3] & 0.5 [0.25, 0.5] & 0.00 / 0.45 & 0.98 / 0.00 & detectable (1.00) \\
+HDBSCAN & 0.4 [0.2, 0.4] & 3 [1, 3] & $>$max [0, $>$max] & 1.00 / 0.34 & 0.97 / 0.39 & detectable (1.00) \\
+OPTICS & 0.2 [0.2, 0.4] & 1.5 [1, 1.5] & 0 [0, 0.25] & 0.91 / 0.00 & 0.46 / 0.54 & detectable (1.00) \\
+DPC & 0.6 [0.4, 0.6] & n/a & 0.75 [0.5, $>$max] & 1.00 / 0.81 & 0.13 / 0.05 & silent (1.00) \\
+\bottomrule
+\end{tabular}

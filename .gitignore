@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+datasets/*
+!datasets/.gitkeep
+!datasets/suite/
+benchmarks/*/results/*.pdf
+benchmarks/*/results/*.png
+.pytest_cache/
+analysis/tables_paper/
+analysis/figures_paper/
+analysis/figures/*.pdf
+analysis/figures/*.png
+
+# from-scratch runs and logs
+reproduction/
+logs/

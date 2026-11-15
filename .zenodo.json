@@ -1,0 +1,14 @@
+{
+  "title": "clustaudit: interventional auditing of clustering algorithms (code, pre-generated suite and result files)",
+  "upload_type": "software",
+  "description": "<p>Code, pre-generated 75-dataset suite and result files for the paper <em>Interventional Auditing of Clustering Algorithms: Controlled Difficulty Sweeps Beyond Benchmarking</em> (F. Ros, R. Riad, Y. Nasser). The package provides a controlled generator (seven structural controls, noise amount and placement), the STATE structured ground truth, a difficulty profile computable from any labelled dataset, and an audit interface for any clustering method. Every result table and data figure of the paper is regenerated from the shipped result files by the analysis scripts, and every number quoted in the text is re-derived by analysis/audit_paper_claims_v2.py.</p>",
+  "creators": [
+    {"name": "Ros, Frédéric", "affiliation": "PRISME UR 4229, Orléans University, INSA-CVL"},
+    {"name": "Riad, Rabia"},
+    {"name": "Nasser, Yassine"}
+  ],
+  "license": "MIT",
+  "keywords": ["clustering evaluation", "algorithm auditing", "synthetic data generation", "difficulty profile", "robustness", "benchmarking"],
+  "access_right": "open",
+  "version": "2.2.0"
+}

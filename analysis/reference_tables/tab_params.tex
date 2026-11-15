@@ -1,0 +1,47 @@
+\begin{tabular}{@{}lll@{}}
+\toprule
+Set & Parameter & Default \\
+\midrule
+$\Theta\_{\text{struct}}$ & \texttt{hypercube\_connectivity} & 0.5 \\
+$\Theta\_{\text{struct}}$ & \texttt{min\_hamming\_ratio} & 0.3 \\
+$\Theta\_{\text{struct}}$ & \texttt{cluster\_distribution} & gaussian \\
+$\Theta\_{\text{struct}}$ & \texttt{cluster\_std\_range} & (0.1, 0.3) \\
+$\Theta\_{\text{struct}}$ & \texttt{enable\_anisotropy} & True \\
+$\Theta\_{\text{struct}}$ & \texttt{anisotropy\_factor\_range} & (1.5, 4.0) \\
+$\Theta\_{\text{struct}}$ & \texttt{enable\_rotation} & True \\
+$\Theta\_{\text{struct}}$ & \texttt{enable\_nonlinear\_deformation} & False \\
+$\Theta\_{\text{struct}}$ & \texttt{enable\_perturbation} & True \\
+$\Theta\_{\text{struct}}$ & \texttt{perturbation\_scale} & 0.1 \\
+$\Theta\_{\text{struct}}$ & \texttt{min\_cluster\_size} & 10 \\
+$\Theta\_{\text{struct}}$ & \texttt{cluster\_size\_imbalance} & 1.0 \\
+$\Theta\_{\text{struct}}$ (density) & \texttt{inter\_density\_variation} & 0.0 \\
+$\Theta\_{\text{struct}}$ (density) & \texttt{inter\_density\_distribution} & lognormal \\
+$\Theta\_{\text{struct}}$ (density) & \texttt{inter\_density\_clip} & (0.5, 2.0) \\
+$\Theta\_{\text{struct}}$ (density) & \texttt{intra\_density\_mode} & uniform \\
+$\Theta\_{\text{struct}}$ (density) & \texttt{intra\_density\_strength} & 0.0 \\
+$\Theta\_{\text{struct}}$ (density) & \texttt{intra\_density\_radius\_fraction} & 0.5 \\
+$\Theta\_{\text{noise}}$ & \texttt{noise\_ratio} & 0.1 \\
+$\Theta\_{\text{noise}}$ & \texttt{internal\_noise\_ratio} & 0.7 \\
+$\Theta\_{\text{noise}}$ & \texttt{internal\_noise\_mode} & bridge \\
+$\Theta\_{\text{noise}}$ & \texttt{bridge\_t\_range} & (0.25, 0.75) \\
+$\Theta\_{\text{noise}}$ & \texttt{bridge\_jitter} & 0.5 \\
+$\Theta\_{\text{noise}}$ & \texttt{distant\_noise\_factor} & 3.0 \\
+$\Theta\_{\text{noise}}$ & \texttt{distant\_noise\_scale} & 1.0 \\
+$\Theta\_{\text{noise}}$ & \texttt{distant\_noise\_strategy} & rejection\_sampling \\
+$\Theta\_{\text{noise}}$ & \texttt{batch\_size} & 100 \\
+$\Theta\_{\text{noise}}$ & \texttt{max\_trials} & 10000 \\
+$\Theta\_{\text{noise}}$ & \texttt{enable\_adaptive\_factor} & True \\
+$\Theta\_{\text{amb}}$ & \texttt{enable\_pre\_refinement} & True \\
+$\Theta\_{\text{amb}}$ & \texttt{pre\_refinement\_classifier} & knn \\
+$\Theta\_{\text{amb}}$ & \texttt{pre\_refinement\_threshold} & 0.999 \\
+$\Theta\_{\text{amb}}$ & \texttt{pre\_refinement\_k\_neighbors} & None \\
+$\Theta\_{\text{amb}}$ & \texttt{enable\_post\_refinement} & True \\
+$\Theta\_{\text{amb}}$ & \texttt{post\_refinement\_classifier} & knn \\
+$\Theta\_{\text{amb}}$ & \texttt{confidence\_mode} & cv \\
+$\Theta\_{\text{amb}}$ & \texttt{cv\_folds} & 5 \\
+$\Theta\_{\text{amb}}$ & \texttt{core\_threshold} & 0.95 \\
+$\Theta\_{\text{amb}}$ & \texttt{distant\_noise\_quantile} & 0.1 \\
+$\Theta\_{\text{amb}}$ & \texttt{entropy\_method} & shannon \\
+$\Theta\_{\text{amb}}$ & \texttt{entropy\_normalization} & True \\
+\bottomrule
+\end{tabular}

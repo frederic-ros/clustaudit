@@ -1,0 +1,15 @@
+{
+  "n_samples": 1000,
+  "dimension": 20,
+  "n_clusters": 5,
+  "random_seed": 42,
+  "structural": {
+    "hypercube_connectivity": 0.8,
+    "enable_anisotropy": false,
+    "enable_rotation": false,
+    "cluster_std_range": [0.1, 0.1],
+    "cluster_size_imbalance": 1.0
+  },
+  "noise": { "noise_ratio": 0.0 },
+  "ambiguity": { "enable_pre_refinement": false, "enable_post_refinement": false }
+}

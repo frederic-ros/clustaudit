@@ -1,0 +1,26 @@
+{
+  "n_samples": 1000,
+  "dimension": 20,
+  "n_clusters": 5,
+  "random_seed": 42,
+  "structural": {
+    "hypercube_connectivity": 0.3,
+    "enable_anisotropy": true,
+    "anisotropy_factor_range": [2.0, 3.0],
+    "enable_rotation": true,
+    "enable_perturbation": true,
+    "cluster_std_range": [0.2, 0.3],
+    "cluster_size_imbalance": 1.5,
+    "density_params": {
+      "inter_density_variation": 0.5,
+      "intra_density_strength": 1.0
+    }
+  },
+  "noise": { "noise_ratio": 0.15, "internal_noise_ratio": 0.7 },
+  "ambiguity": {
+    "enable_pre_refinement": true,
+    "enable_post_refinement": true,
+    "core_threshold": 0.90,
+    "noise_threshold": 0.10
+  }
+}

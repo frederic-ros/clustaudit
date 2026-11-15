@@ -1,0 +1,13 @@
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Scalar & suite (F), $N=75$ & sweeps (F), $N=150$ & noise grid (S), $N=225$ & pooled, $N=450$ \\
+\midrule
+$D$ & $-0.92$ & $-0.93$ & $-0.67$ & $-0.75$ \\
+$D_{\text{knn}}$ (no Silhouette) & $-0.88$ & $-0.92$ & $-0.66$ & $-0.76$ \\
+$1-$Silhouette (reference) & $-0.94$ & $-0.93$ & $-0.14$ & $-0.65$ \\
+$k$-NN CV error & $-0.66$ & $-0.78$ & -- & $-0.51$ \\
+\midrule
+ten-fold $R^2$: components $+$ $k$-NN & & & & 0.73 \\
+ten-fold $R^2$: three baselines & & & & 0.41 \\
+\bottomrule
+\end{tabular}

@@ -1,0 +1,17 @@
+# Exact versions of the verification environment (Python 3.12 / 3.13, Linux).
+# With them: tests pass, every number of the paper is re-derived from the shipped
+# result files, and every result table and data figure is regenerated.
+# For older Python versions, `pip install -e .` uses the ranges of pyproject.toml.
+numpy==2.5.3
+scipy==1.18.1
+pandas==3.0.5
+scikit-learn==1.9.1
+matplotlib==3.11.2
+seaborn==0.13.2
+PyYAML==6.0.3
+pytest==9.1.1
+adjustText==1.4.0
+# Optional, for specific experiments only (not pinned: install as needed)
+#   hdbscan            tuning protocol (D), --criterion dbcv
+#   clustpy, torch     deep tier
+#   mdcgenpy, hawks    cross-generator confrontation
