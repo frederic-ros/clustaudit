@@ -1,5 +1,7 @@
 # clustaudit — interventional auditing of clustering algorithms
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24239815.svg)](https://doi.org/10.5281/zenodo.24239815)
+
 Code, pre-generated suite and result files for the paper
 
 > F. Ros, R. Riad, Y. Nasser. *Interventional Auditing of Clustering Algorithms:
@@ -174,8 +176,12 @@ scikit-learn version, expect these two methods to differ at that scale.
 
 ## Citation
 
-See `CITATION.cff`. Please cite the paper and the archived release (DOI on the
-Zenodo record).
+Please cite the paper and the archived release you used (see also `CITATION.cff`):
+
+* release v2.2.0, the version described in the paper:
+  [doi:10.5281/zenodo.24239816](https://doi.org/10.5281/zenodo.24239816);
+* all versions (resolves to the latest):
+  [doi:10.5281/zenodo.24239815](https://doi.org/10.5281/zenodo.24239815).
 
 ## License
 
