@@ -7,7 +7,7 @@
     {"name": "Riad, Rabia"},
     {"name": "Nasser, Yassine"}
   ],
-  "license": "MIT",
+  "license": "mit",
   "keywords": ["clustering evaluation", "algorithm auditing", "synthetic data generation", "difficulty profile", "robustness", "benchmarking"],
   "access_right": "open",
   "version": "2.2.0"
