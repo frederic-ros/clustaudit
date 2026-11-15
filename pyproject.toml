@@ -20,7 +20,7 @@ figures = ["adjustText"]
 dev = ["pytest"]
 
 [project.urls]
-Repository = "https://github.com/<owner>/clustaudit"
+Repository = "https://github.com/frederic-ros/clustaudit"
 
 [project.scripts]
 clustaudit = "clustaudit.cli:main"

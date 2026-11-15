@@ -156,11 +156,18 @@ STEP_BY_NAME = {s.name: s for s in STEPS}
 
 
 # ----------------------------------------------------------------------------- helpers
+TEXT_RESULTS = (".csv", ".tex", ".md", ".txt")
+
+
 def sha256(path):
+    """SHA-256 of a file; for text files, of its content with line endings normalized to LF,
+    so that a checkout converting LF to CRLF (git on Windows) does not count as an alteration."""
     h = hashlib.sha256()
     with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
+        data = f.read()
+    if path.lower().endswith(TEXT_RESULTS):
+        data = data.replace(b"\r\n", b"\n")
+    h.update(data)
     return h.hexdigest()
 
 
@@ -238,7 +245,7 @@ def compare_tables(new_dir, ref_dir):
         p = os.path.join(new_dir, f)
         if not os.path.exists(p):
             missing.append(f)
-        elif open(p, "rb").read() == open(os.path.join(ref_dir, f), "rb").read():
+        elif open(p, "rb").read().replace(b"\r\n", b"\n") == open(os.path.join(ref_dir, f), "rb").read().replace(b"\r\n", b"\n"):
             same.append(f)
         else:
             diff.append(f)

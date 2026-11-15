@@ -1,0 +1,8 @@
+# Result files, the suite and the reference tables are checked against results_manifest.csv
+# and compared byte for byte: git must never rewrite their line endings.
+*.csv                          -text
+*.npz                          binary
+analysis/reference_tables/*.tex -text
+# Windows batch files need CRLF on checkout; shell scripts need LF.
+*.bat                          text eol=crlf
+*.sh                           text eol=lf

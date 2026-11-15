@@ -4,7 +4,7 @@ title: "clustaudit: interventional auditing of clustering algorithms"
 version: 2.2.0
 date-released: 2026-11-14
 license: MIT
-repository-code: "https://github.com/<owner>/clustaudit"
+repository-code: "https://github.com/frederic-ros/clustaudit"
 authors:
   - family-names: Ros
     given-names: Frédéric

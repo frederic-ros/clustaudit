@@ -37,7 +37,7 @@ There are two ways to install, for two purposes.
 and the version ranges of `pyproject.toml`.
 
 ```bash
-git clone https://github.com/<owner>/clustaudit.git
+git clone https://github.com/frederic-ros/clustaudit.git
 cd clustaudit
 python -m pip install -e .
 ```
