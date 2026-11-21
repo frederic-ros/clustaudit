@@ -1,18 +1,18 @@
 cff-version: 1.2.0
 message: "If you use this software or its result files, please cite the paper and the archived release."
 title: "clustaudit: interventional auditing of clustering algorithms"
-version: 2.2.0
-doi: 10.5281/zenodo.24239816
-date-released: 2026-11-15
+version: 2.2.1
+doi: 10.5281/zenodo.24239815
+date-released: 2026-11-21
 license: MIT
 repository-code: "https://github.com/frederic-ros/clustaudit"
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.24239816
-    description: "Release v2.2.0, the version described in the paper"
-  - type: doi
     value: 10.5281/zenodo.24239815
-    description: "All versions (resolves to the latest)"
+    description: "All versions (resolves to the latest); release v2.2.1 is the version described in the paper"
+  - type: doi
+    value: 10.5281/zenodo.24239816
+    description: "Release v2.2.0, the first public release"
 authors:
   - family-names: Ros
     given-names: Frédéric

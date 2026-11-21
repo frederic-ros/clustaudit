@@ -10,5 +10,5 @@
   "license": "mit",
   "keywords": ["clustering evaluation", "algorithm auditing", "synthetic data generation", "difficulty profile", "robustness", "benchmarking"],
   "access_right": "open",
-  "version": "2.2.0"
+  "version": "2.2.1"
 }

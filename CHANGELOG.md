@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## 2.2.1 — 2026-11-21
+
+The version described in the paper. Two fixes, and no result changes: the result files,
+the suite, every table and every number of the paper are those of 2.2.0.
 
 - `analysis/make_paper_figures_v2.py`: figures readable in monochrome print and at the
   text width. Every method has its own outlined marker, and the methods of a family
