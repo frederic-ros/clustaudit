@@ -181,10 +181,19 @@ def have(module):
 
 
 def run(cmd, cwd, log, env=None, timeout=None):
+    # The scripts print non-ASCII text (arrows, Greek letters). Their output goes to a log file,
+    # which Python encodes in the locale's code page by default (cp1252 on Windows, where they
+    # would then fail): force UTF-8 on every platform.
+    env = dict(os.environ if env is None else env, PYTHONUTF8="1", PYTHONIOENCODING="utf-8")
     t0 = time.time()
-    with open(log, "w") as fh:
+    with open(log, "w", encoding="utf-8") as fh:
         p = subprocess.run(cmd, cwd=cwd, stdout=fh, stderr=subprocess.STDOUT, env=env, timeout=timeout)
     return p.returncode, time.time() - t0
+
+
+def _read(path):
+    with open(path, encoding="utf-8", errors="replace") as fh:
+        return fh.read()
 
 
 def env_report():
@@ -257,7 +266,7 @@ def read_manifest(base):
     if not os.path.exists(p):
         return None
     out = {}
-    with open(p) as fh:
+    with open(p, encoding="utf-8") as fh:
         next(fh)
         for line in fh:
             parts = line.rstrip("\n").split(",")
@@ -280,7 +289,7 @@ def write_manifest(base):
     for f in sorted(os.listdir(suite)) if os.path.isdir(suite) else []:
         if f.endswith(".npz"):
             rows.append(f"datasets/suite/{f},suite,,{sha256(os.path.join(suite, f))}")
-    with open(os.path.join(base, MANIFEST), "w") as fh:
+    with open(os.path.join(base, MANIFEST), "w", encoding="utf-8") as fh:
         fh.write("path,step,rows,sha256\n" + "\n".join(rows) + "\n")
     print(f"{MANIFEST}: {len(rows)} files")
 
@@ -297,7 +306,7 @@ def verify_release(a):
     # 1. tests
     if not a.no_tests:
         rc, dt = run(_py("-m", "pytest", "-q", "tests"), base, os.path.join(logs, "pytest.log"))
-        tail = open(os.path.join(logs, "pytest.log")).read().strip().splitlines()[-1:] or [""]
+        tail = _read(os.path.join(logs, "pytest.log")).strip().splitlines()[-1:] or [""]
         report += ["## 1. Test suite", f"- {'PASS' if rc == 0 else 'FAIL'}: {tail[0]} ({dt:.0f} s)", ""]
         ok_all &= rc == 0
 
@@ -322,8 +331,8 @@ def verify_release(a):
 
     # 3. claims
     rc, dt = run(_py("analysis/audit_paper_claims_v2.py", "--results-root", base), base, os.path.join(logs, "claims.log"))
-    tail = [l for l in open(os.path.join(logs, "claims.log")).read().splitlines() if "claims match" in l]
-    bad = [l for l in open(os.path.join(logs, "claims.log")).read().splitlines() if "MISMATCH" in l or "NOT COMPUTED" in l]
+    tail = [l for l in _read(os.path.join(logs, "claims.log")).splitlines() if "claims match" in l]
+    bad = [l for l in _read(os.path.join(logs, "claims.log")).splitlines() if "MISMATCH" in l or "NOT COMPUTED" in l]
     report += ["## 3. Numbers quoted in the paper", f"- {'PASS' if rc == 0 else 'FAIL'}: {tail[0] if tail else 'no summary line'}"]
     report += [f"  - {l.strip()}" for l in bad] + [""]
     ok_all &= rc == 0
@@ -374,7 +383,7 @@ def verify_release(a):
                 "the experiments: `python scripts/reproduce.py from-scratch --out DIR` does.") if ok_all else
                "**FAIL.** See the items marked FAIL above; logs in " + logs, ""]
     out = a.report or os.path.join(logs, "VERIFICATION_REPORT.md")
-    open(out, "w").write("\n".join(report))
+    open(out, "w", encoding="utf-8").write("\n".join(report))
     print("\n".join(report)); print(f"report: {out}")
     return 0 if ok_all else 1
 
@@ -461,7 +470,7 @@ def from_scratch(a):
     claims_ok, claims_line, claims_bad = False, "not run", []
     if not failed or a.keep_going:
         rc, _ = run(_py("analysis/audit_paper_claims_v2.py"), out, os.path.join(out, "logs", "claims.log"), env=env)
-        txt = open(os.path.join(out, "logs", "claims.log")).read().splitlines()
+        txt = _read(os.path.join(out, "logs", "claims.log")).splitlines()
         claims_ok = rc == 0
         claims_line = next((l for l in txt if "claims match" in l), "no summary line")
         claims_bad = [l.strip() for l in txt if "MISMATCH" in l or "NOT COMPUTED" in l]
@@ -499,13 +508,15 @@ def from_scratch(a):
             "- a result file that is not byte-identical to the release (column 'same as release') is expected where an "
             "implementation differs between library versions (HDBSCAN, see README); the claims audit decides whether "
             "any number of the paper is affected.", "", "## Verdict", verdict, ""]
-    open(os.path.join(out, "REPRODUCTION_REPORT.md"), "w").write("\n".join(rep))
+    open(os.path.join(out, "REPRODUCTION_REPORT.md"), "w", encoding="utf-8").write("\n".join(rep))
     print("\n".join(rep))
     return 0 if full else (2 if (n_fail == 0 and claims_ok) else 1)
 
 
 # ----------------------------------------------------------------------------- main
 def main():
+    if hasattr(sys.stdout, "reconfigure"):          # a console or file that cannot show a character
+        sys.stdout.reconfigure(errors="backslashreplace")
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="mode", required=True)
     v = sub.add_parser("verify-release", help="check the distributed results (no experiment is re-run)")

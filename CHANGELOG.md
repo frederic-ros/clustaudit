@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+- `analysis/make_paper_figures_v2.py`: figures readable in monochrome print and at the
+  text width. Every method has its own outlined marker, and the methods of a family
+  differ by line style (solid, dashed, dotted, dash-dot); profile panels and the noise
+  grid use the same marker/line-style cycle; curve figures are drawn at about twice their
+  printed width with larger fonts, legends under the figures. No number changes: the
+  verification (`reproduce.py verify-release`) passes unchanged (243/243 claims,
+  25/25 tables).
+- `scripts/reproduce.py`: `verify-release` (and `from-scratch`) failed on Windows. The
+  scripts print non-ASCII text, and their output, redirected to log files, was encoded
+  in the Windows code page (cp1252): the claims audit and the pipeline figure stopped
+  with `UnicodeEncodeError`. Every step now runs with UTF-8 output (`PYTHONUTF8=1`),
+  and logs and reports are read and written in UTF-8. No result changes.
+
 ## 2.2.0 — first public release
 
 ### No run is ever lost (affects protocols S and D)

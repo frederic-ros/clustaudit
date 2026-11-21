@@ -9,8 +9,10 @@ Figures (main text):  factors_2d, noise_crossover, noise_grid, overlap_SF, aniso
 Figures (supplement): noise_grid_conventions, dimension_silhouette_K, imbalance_n3000,
                       overlap_profile
 Style: one colour per algorithmic family (centroid = blues, connectivity = greens,
-density = reds/oranges, graph/peaks = purples), one marker per method, 11-pt fonts,
-seed spread as a light band rather than error bars.
+density = reds/oranges, graph/peaks = purples), and, so that every curve stays identifiable in
+monochrome print, one marker shape per method (outlined) and a different line style for each
+method of a family (solid, dashed, dotted, dash-dot); 11-pt fonts; seed spread as a light band
+rather than error bars. Profile panels and the noise grid use the same marker/line-style cycle.
 """
 from __future__ import annotations
 import argparse, glob, os, warnings
@@ -20,17 +22,22 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-STYLE = {  # colour, marker, linestyle
-    "KMeans":   ("#1f5fa8", "o", "-"),  "GMM":     ("#6baed6", "s", "-"),
-    "Ward":     ("#2a924a", "^", "-"),  "Average": ("#8fd18b", "v", "--"), "Complete": ("#c7e9c0", "<", ":"),
-    "DBSCAN":   ("#c0392b", "D", "-"),  "HDBSCAN": ("#e8743b", "p", "-"),  "OPTICS":   ("#f3b562", "h", "--"),
-    "Spectral": ("#6a3d9a", "*", "-"),  "DPC":     ("#b57edc", "X", "--"),
+SOLID, DASHED, DOTTED, DASHDOT = "-", (0, (5, 2)), (0, (1.2, 1.6)), (0, (6, 2, 1.5, 2))
+STYLE = {  # colour, marker, linestyle: within a family the line styles differ, across the pool the markers do
+    "KMeans":   ("#1f5fa8", "o", SOLID),  "GMM":     ("#6baed6", "s", DASHED),
+    "Ward":     ("#2a924a", "^", SOLID),  "Average": ("#74c476", "v", DASHED), "Complete": ("#a1d99b", "<", DOTTED),
+    "DBSCAN":   ("#c0392b", "D", SOLID),  "HDBSCAN": ("#e8743b", "p", DASHED), "OPTICS":   ("#f3b562", "h", DOTTED),
+    "Spectral": ("#6a3d9a", "*", SOLID),  "DPC":     ("#b57edc", "X", DASHDOT),
     "IDEC": ("#1f5fa8", "o", "-"), "DCN": ("#2a924a", "s", "-"), "DipDECK": ("#c0392b", "D", "-"),
 }
+# marker / line-style cycle for curves that are not methods (profile descriptors, noise-grid levels)
+CYCLE = [("o", SOLID), ("s", DASHED), ("^", DOTTED), ("D", DASHDOT), ("v", SOLID), ("P", DASHED)]
 ORDER = ["KMeans", "GMM", "Ward", "Average", "Spectral", "DPC", "DBSCAN", "HDBSCAN", "OPTICS"]
-plt.rcParams.update({"font.size": 11, "axes.titlesize": 12, "axes.labelsize": 11, "legend.fontsize": 9,
-                     "xtick.labelsize": 10, "ytick.labelsize": 10, "axes.grid": True, "grid.alpha": .25,
-                     "lines.linewidth": 1.8, "lines.markersize": 6, "figure.dpi": 110})
+plt.rcParams.update({"font.size": 12.5, "axes.titlesize": 13, "axes.labelsize": 12.5, "legend.fontsize": 11,
+                     "xtick.labelsize": 11.5, "ytick.labelsize": 11.5, "axes.grid": True, "grid.alpha": .25,
+                     "lines.linewidth": 1.6, "lines.markersize": 6, "figure.dpi": 110})
+# Curve figures are drawn at about twice their printed width (the text width, ~12.5 cm), so that
+# fonts print at 6-7 pt and markers stay distinguishable.
 
 
 def line(ax, df, x, alg, label=None, band=True, y="ARI"):
@@ -38,15 +45,25 @@ def line(ax, df, x, alg, label=None, band=True, y="ARI"):
     if d.empty: return
     g = d.groupby(x)[y].agg(["mean", "std"])
     c, m, ls = STYLE.get(alg, ("k", "o", "-"))
-    ax.plot(g.index, g["mean"], color=c, marker=m, ls=ls, label=label or alg, zorder=3)
+    ax.plot(g.index, g["mean"], color=c, marker=m, ls=ls, label=label or alg, zorder=3,
+            ms=8.5 if m == "*" else 6.5, mec="#222222", mew=0.6)
     if band:
         ax.fill_between(g.index, g["mean"] - g["std"].fillna(0), g["mean"] + g["std"].fillna(0), color=c, alpha=.07, lw=0)
 
 
-def legend_families(ax, algs, **kw):
+def legend_families(ax, algs, x=0.5, ncol=5, **kw):
+    """Method legend under the figure (a figure legend, so that tight_layout does not shrink one
+    panel to make room for it), centred at x in figure coordinates."""
     h, l = ax.get_legend_handles_labels()
     order = [a for a in ORDER if a in l]
-    ax.legend([h[l.index(a)] for a in order], order, ncol=kw.pop("ncol", 3), frameon=False, **kw)
+    ax.figure.legend([h[l.index(a)] for a in order], order, ncol=ncol, frameon=False,
+                     loc="upper center", bbox_to_anchor=(x, 0.0))
+
+
+def legend_below(ax, x, ncol=2):
+    """Legend of a profile panel, under the figure below that panel."""
+    h, l = ax.get_legend_handles_labels()
+    ax.figure.legend(h, l, ncol=ncol, frameon=False, loc="upper center", bbox_to_anchor=(x, 0.0))
 
 
 def save(fig, out, name):
@@ -92,7 +109,7 @@ def main():
 
     # ------------------------------------------------------------------ noise crossover (S and F), eta = 0.3
     if NOISE is not None:
-        fig, axes = plt.subplots(1, 3, figsize=(15, 4.6))
+        fig, axes = plt.subplots(1, 3, figsize=(11, 3.9))
         d = NOISE[NOISE.value_eta == 0.3]
         for alg in ORDER: line(axes[0], d, "value_eta_int", alg)
         axes[0].set_title("Protocol S, $\\eta = 0.30$"); axes[0].set_xlabel("$\\eta_{int}$ (share of noise between clusters)"); axes[0].set_ylabel("inlier ARI")
@@ -100,30 +117,33 @@ def main():
             for alg in ORDER: line(axes[1], EIF, "value", alg)
             axes[1].set_title("Protocol F, $\\eta = 0.30$"); axes[1].set_xlabel("$\\eta_{int}$")
         p = d.groupby("value_eta_int")[["S_noise", "knn_noise_proximity", "D_dataset", "base_one_minus_silhouette", "S_separation"]].mean()
-        for col, lab, c in [("S_noise", "$S_{noise}$", "#c0392b"), ("knn_noise_proximity", "noise proximity", "#e8743b"), ("D_dataset", "$D$", "k"),
-                            ("base_one_minus_silhouette", "1 $-$ Silhouette (ref.)", "#6baed6"), ("S_separation", "$S_{sep}$", "#1f5fa8")]:
-            axes[2].plot(p.index, p[col], marker="o", label=lab, color=c)
-        axes[2].set_title("Profile along $\\eta_{int}$"); axes[2].set_xlabel("$\\eta_{int}$"); axes[2].legend(frameon=False)
+        for (col, lab, c), (mk, ls) in zip([("S_noise", "$S_{noise}$", "#c0392b"), ("knn_noise_proximity", "noise proximity", "#e8743b"), ("D_dataset", "$D$", "k"),
+                                            ("base_one_minus_silhouette", "1 $-$ Silhouette (ref.)", "#6baed6"), ("S_separation", "$S_{sep}$", "#1f5fa8")], CYCLE):
+            axes[2].plot(p.index, p[col], marker=mk, ls=ls, label=lab, color=c, ms=6, mec="#222222", mew=0.6)
+        axes[2].set_title("Profile along $\\eta_{int}$"); axes[2].set_xlabel("$\\eta_{int}$")
         for ax in axes[:2]: ax.set_ylim(-0.05, 1.08)
-        legend_families(axes[1] if EIF is not None else axes[0], ORDER, loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=5)
+        fig.tight_layout()
+        legend_families(axes[1] if EIF is not None else axes[0], ORDER, x=0.36, ncol=5)
+        legend_below(axes[2], x=0.845)
         save(fig, out, "noise_crossover_v2")
 
         # full grid, one panel per algorithm, lines = eta_int
         algs = [a for a in ORDER if a in NOISE.algorithm.unique()]
-        fig, axes = plt.subplots(2, 4, figsize=(15, 6.6), sharey=True)
+        fig, axes = plt.subplots(2, 4, figsize=(11, 5.6), sharey=True)
         cmap = plt.cm.viridis(np.linspace(0, 1, 5))
         for ax, alg in zip(axes.ravel(), algs):
             dd = NOISE[NOISE.algorithm == alg]
-            for ei, c in zip([0, .25, .5, .75, 1.0], cmap):
+            for ei, c, (mk, ls) in zip([0, .25, .5, .75, 1.0], cmap, CYCLE):
                 g = dd[dd.value_eta_int == ei].groupby("value_eta").ARI.mean()
-                ax.plot(g.index, g.values, marker="o", ms=4, color=c, label=f"$\\eta_{{int}}$ = {ei}")
+                ax.plot(g.index, g.values, marker=mk, ls=ls, ms=4.5, color=c, mec="#222222", mew=0.4, label=f"$\\eta_{{int}}$ = {ei}")
             ax.set_title(alg); ax.set_xlabel("$\\eta$"); ax.set_ylim(-0.05, 1.08)
         axes[0, 0].set_ylabel("inlier ARI"); axes[1, 0].set_ylabel("inlier ARI")
-        axes[0, 0].legend(frameon=False, fontsize=8)
+        fig.tight_layout()
+        legend_below(axes[0, 0], x=0.5, ncol=5)
         save(fig, out, "noise_grid_v2")
 
         # supplement: conventions
-        fig, axes = plt.subplots(1, 3, figsize=(15, 4.4), sharey=True)
+        fig, axes = plt.subplots(1, 3, figsize=(11, 3.7), sharey=True)
         for ax, (col, t) in zip(axes, [("ARI", "inlier ARI"), ("ARI_kept", "ARI on kept points"), ("ARI_full", "ARI with noise as a class")]):
             for alg in ORDER: line(ax, d, "value_eta_int", alg, y=col, band=False)
             ax.set_title(t); ax.set_xlabel("$\\eta_{int}$ ($\\eta = 0.30$, protocol S)")
@@ -132,22 +152,24 @@ def main():
 
     # ------------------------------------------------------------------ overlap S / F + profile
     if OVF is not None:
-        fig, axes = plt.subplots(1, 3, figsize=(15, 4.6))
+        fig, axes = plt.subplots(1, 3, figsize=(11, 3.9))
         for alg in ORDER:
             if OVS is not None: line(axes[0], with_dpc(OVS, DPCS), "value", alg)
             line(axes[1], with_dpc(OVF, DPC["overlap"]), "value", alg)
         axes[0].set_title("Protocol S"); axes[1].set_title("Protocol F")
         for ax in axes[:2]: ax.set_xlabel("overlap $\\sigma$"); ax.set_ylabel("inlier ARI"); ax.set_ylim(-0.05, 1.08); ax.axhline(0.5, color="k", lw=.7, ls=":")
         p = OVF.groupby("value")[["S_separation", "S_boundary", "D_dataset", "knn_edge_impurity", "knn_fragmentation", "base_knn_cv_error"]].mean()
-        for col, lab in [("S_separation", "$S_{sep}$"), ("S_boundary", "$S_{bnd}$"), ("D_dataset", "$D$"), ("knn_edge_impurity", "edge impurity"), ("knn_fragmentation", "fragmentation"), ("base_knn_cv_error", "$k$-NN CV error")]:
-            axes[2].plot(p.index, p[col], marker="o", label=lab)
-        axes[2].set_title("Profile along $\\sigma$"); axes[2].set_xlabel("overlap $\\sigma$"); axes[2].legend(frameon=False, fontsize=8)
-        legend_families(axes[0], ORDER, loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=5)
+        for (col, lab), (mk, ls) in zip([("S_separation", "$S_{sep}$"), ("S_boundary", "$S_{bnd}$"), ("D_dataset", "$D$"), ("knn_edge_impurity", "edge impurity"), ("knn_fragmentation", "fragmentation"), ("base_knn_cv_error", "$k$-NN CV error")], CYCLE):
+            axes[2].plot(p.index, p[col], marker=mk, ls=ls, label=lab, ms=6, mec="#222222", mew=0.6)
+        axes[2].set_title("Profile along $\\sigma$"); axes[2].set_xlabel("overlap $\\sigma$")
+        fig.tight_layout()
+        legend_families(axes[0], ORDER, x=0.36, ncol=5)
+        legend_below(axes[2], x=0.845)
         save(fig, out, "overlap_SF_v2")
 
     # ------------------------------------------------------------------ anisotropy S / F
     if E2 is not None and ANIF is not None:
-        fig, axes = plt.subplots(1, 2, figsize=(11, 4.6), sharey=True)
+        fig, axes = plt.subplots(1, 2, figsize=(9, 3.9), sharey=True)
         aS = E2[E2.parameter == "anisotropy"]
         for alg in ORDER: line(axes[0], aS, "value", alg); line(axes[1], ANIF, "value", alg)
         axes[0].set_title("Protocol S"); axes[1].set_title("Protocol F")
@@ -158,13 +180,13 @@ def main():
     # ------------------------------------------------------------------ dimension two regimes (+ supplement: Silhouette, K)
     if E2 is not None and DIMF is not None:
         dd = E2[E2.parameter == "dimensionality"]
-        fig, axes = plt.subplots(1, 2, figsize=(11, 4.6), sharey=True)
+        fig, axes = plt.subplots(1, 2, figsize=(9, 3.9), sharey=True)
         for alg in ORDER: line(axes[0], dd, "value", alg); line(axes[1], DIMF, "value", alg)
         axes[0].set_title("$n = \\max(1000,\\, 50d)$"); axes[1].set_title("$n = 1000$ fixed")
         for ax in axes: ax.set_xlabel("dimension $d$"); ax.set_xscale("log"); ax.set_ylim(-0.05, 1.08)
         axes[0].set_ylabel("inlier ARI"); legend_families(axes[0], ORDER, loc="upper center", bbox_to_anchor=(1.05, -0.2), ncol=5)
         save(fig, out, "dimension_two_regimes_v2")
-        fig, axes = plt.subplots(1, 2, figsize=(11, 4.4))
+        fig, axes = plt.subplots(1, 2, figsize=(9, 3.7))
         for alg in ORDER: line(axes[0], DIMF, "value", alg, y="Silhouette", band=False); line(axes[1], DIMF, "value", alg, y="n_clusters_found", band=False)
         axes[0].set_title("Silhouette of the output, $n$ fixed"); axes[1].set_title("$\\hat K$, $n$ fixed (true $K = 5$)"); axes[1].axhline(5, color="k", ls="--", lw=.8)
         for ax in axes: ax.set_xlabel("dimension $d$"); ax.set_xscale("log")
@@ -173,7 +195,7 @@ def main():
 
     # ------------------------------------------------------------------ density + imbalance (F), ARI and smallest-cluster F1
     if IMB is not None and INT is not None and INTRA is not None:
-        fig, axes = plt.subplots(2, 3, figsize=(15, 8), sharey="row")
+        fig, axes = plt.subplots(2, 3, figsize=(11, 7), sharey="row")
         panels = [("inter_density", INT, "$\\delta_{inter}$", "inter-cluster density heterogeneity"),
                   ("intra_density", INTRA, "$s_{intra}$ (core-dense)", "intra-cluster density profile"),
                   ("imbalance", IMB, "$\\rho_{imb}$", "size imbalance")]
@@ -186,7 +208,7 @@ def main():
         legend_families(axes[1, 1], ORDER, loc="upper center", bbox_to_anchor=(0.5, -0.22), ncol=5)
         save(fig, out, "density_imbalance_F_v2")
         if IMB3 is not None:
-            fig, axes = plt.subplots(1, 2, figsize=(11, 4.4), sharey=True)
+            fig, axes = plt.subplots(1, 2, figsize=(9, 3.7), sharey=True)
             for alg in ORDER: line(axes[0], IMB, "value", alg, y="min_cluster_f1"); line(axes[1], IMB3, "value", alg, y="min_cluster_f1")
             axes[0].set_title("$n = 1000$ (smallest cluster 180 $\\to$ 10)"); axes[1].set_title("$n = 3000$ (smallest cluster 540 $\\to$ 30)")
             for ax in axes: ax.set_xlabel("$\\rho_{imb}$")
