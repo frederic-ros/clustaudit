@@ -178,8 +178,9 @@ scikit-learn version, expect these two methods to differ at that scale.
 
 Please cite the paper and the archived release you used (see also `CITATION.cff`):
 
-* release v2.2.1 is the version described in the paper; the Zenodo record of all
-  versions lists its DOI and resolves to the latest:
+* release v2.2.1, the version described in the paper:
+  [doi:10.5281/zenodo.24422756](https://doi.org/10.5281/zenodo.24422756);
+* all versions (resolves to the latest):
   [doi:10.5281/zenodo.24239815](https://doi.org/10.5281/zenodo.24239815);
 * release v2.2.0, the first public release:
   [doi:10.5281/zenodo.24239816](https://doi.org/10.5281/zenodo.24239816).
