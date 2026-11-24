@@ -14,6 +14,9 @@ analysis/figures_paper/
 analysis/figures/*.pdf
 analysis/figures/*.png
 
+# summary the deep script writes next to its result file (derived, not shipped)
+benchmarks/deep/results/deep_results_summary.csv
+
 # from-scratch runs and logs
 reproduction/
 logs/

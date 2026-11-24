@@ -6,7 +6,7 @@ which regenerate a handful of datasets.
 
 | script | writes | paper |
 |---|---|---|
-| `audit_paper_claims_v2.py` | console report; exit status 1 on any mismatch | every number quoted in the text (243 checks) |
+| `audit_paper_claims_v2.py` | console report; exit status 1 on any mismatch | every number quoted in the text (267 checks) |
 | `make_paper_tables_v2.py` | `tables_paper/tab_*.tex` | Tables 2, 4–8 and S1–S20 |
 | `make_paper_figures_v2.py` | `figures_paper/*.pdf, *.png` | Figures 4–11 and S1–S3 |
 | `make_pipeline_figure.py` | `figures_paper/pipeline_stages.*` | Figure 3 |

@@ -19,6 +19,7 @@ so the manuscript and the supplement \\input them:
   tab_crossgen.tex          cross-generator summary; tab_crossgen_full.tex
   tab_real.tex              19 real datasets
   tab_deep.tex              deep tier regime means and correlations
+  tab_deep_embedding.tex    the profile in the input and in each learned representation (deep tier)
 """
 from __future__ import annotations
 import argparse, glob, os, sys, warnings
@@ -402,6 +403,22 @@ def main():
             rows.append(f"{m} & {sgn(pearsonr(g.D, g.ARI)[0])} & {sgn(spearmanr(g.D, g.ARI).statistic)} & {sgn(pearsonr(g.dropna(subset=['Sil']).D, g.dropna(subset=['Sil']).Sil)[0])} & "
                         + " & ".join(f2(g[g.reg == r].ARI.mean()) for r in range(3)) + " & " + " & ".join(f2(g[g.reg == r].K.mean(), 1) for r in range(3)) + " \\\\")
         write(out, "tab_deep.tex", "Method & $r(D,\\text{ARI})$ & $\\rho(D,\\text{ARI})$ & $r(D,\\text{Sil})$ & ARI E & ARI M & ARI H & $\\hat K$ E & $\\hat K$ M & $\\hat K$ H", rows, "@{}lccccccccc@{}")
+
+    # ---------------- deep: the profile in the learned representations (first seed)
+    EMB = load(R, "benchmarks/deep/results/deep_embedding_profiles.csv")
+    if EMB is not None and DEEP is not None:
+        EMB = EMB.copy(); EMB["reg"] = EMB.dataset.str.extract(r"dataset_(\d+)_")[0].astype(int) // 25
+        a42 = DEEP[DEEP.seed == 42].set_index(["dataset", "method"]).ARI
+        inp = EMB[EMB.representation == "input"].set_index("dataset")
+        def ends(g, col):
+            return " / ".join(f2(g[g.reg == r][col].mean()) for r in range(3))
+        rows = [f"input (standardized) & {ends(EMB[EMB.representation == 'input'], 'D_dataset')} & {ends(EMB[EMB.representation == 'input'], 'knn_edge_impurity')} & "
+                f"{ends(EMB[EMB.representation == 'input'], 'knn_fragmentation')} & -- \\\\"]
+        for m in ("IDEC", "DCN", "DipDECK"):
+            g = EMB[EMB.representation == m]; e = g.set_index("dataset"); ari = a42.xs(m, level="method").loc[e.index]
+            rho_in = spearmanr(inp.loc[e.index, "D_dataset"], ari).statistic; rho_emb = spearmanr(e.D_dataset, ari).statistic
+            rows.append(f"{m} & {ends(g, 'D_dataset')} & {ends(g, 'knn_edge_impurity')} & {ends(g, 'knn_fragmentation')} & {sgn(rho_in)} / {sgn(rho_emb)} \\\\")
+        write(out, "tab_deep_embedding.tex", "Representation & $D$ (E / M / H) & edge impurity (E / M / H) & fragmentation (E / M / H) & $\\rho(D, \\text{ARI})$, input / own", rows, "@{}lcccc@{}")
 
 
 if __name__ == "__main__":

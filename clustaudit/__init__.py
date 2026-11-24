@@ -9,7 +9,7 @@ clustaudit -- interventional auditing of clustering algorithms
     print(profile_from_state(state))
     print(difficulty_profile(X_real, y_real))
 """
-__version__ = "2.2.1"
+__version__ = "2.2.2"
 
 from .core.state import ClusteringState
 from .core.pipeline import generate_dataset, generate_easy_dataset, generate_hard_dataset

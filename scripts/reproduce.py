@@ -135,8 +135,12 @@ STEPS: List[Step] = [
          [("benchmarks/cross-generator/results/crossgen_results.csv", 1260)], optional="hawks",
          note="needs hawks and mdcgenpy (pip install -e .[crossgen])"),
     Step("deep", _py("benchmarks/deep/run_deep_clustering.py", "--data_dir", "datasets/suite"),
-         [("benchmarks/deep/results/deep_results.csv", 1125)], optional="clustpy",
-         note="needs clustpy and torch (pip install -e .[deep]); about ten hours on CPU"),
+         [("benchmarks/deep/results/deep_results.csv", 1125), ("benchmarks/deep/results/deep_labels.npz", None),
+          ("benchmarks/deep/results/deep_embeddings_seed42.npz", None), ("benchmarks/deep/results/deep_run_info.csv", None)],
+         optional="clustpy", note="needs clustpy and torch (pip install -e .[deep]); ten to fifteen hours on CPU"),
+    Step("deep_embedding", _py("benchmarks/deep/embedding_profile.py", "--data_dir", "datasets/suite"),
+         [("benchmarks/deep/results/deep_embedding_profiles.csv", 300)],
+         note="the profile in the representation each deep method learned (reads the deep step's embeddings)"),
     Step("real_raw", _py("benchmarks/real-data/run_transfer.py"),
          [("benchmarks/real-data/results/transfer_results.csv", 19), ("benchmarks/real-data/results/transfer_per_algo.csv", 152)],
          note="downloads 15 datasets from OpenML (network access)"),
@@ -220,7 +224,8 @@ def check_file(base, rel, expected, t_start=None, manifest=None):
         return False, "missing"
     if t_start is not None and os.path.getmtime(p) < t_start - 1:
         return False, "not written by this step (older file)"
-    r = n_rows(p)
+    text = p.lower().endswith(TEXT_RESULTS)
+    r = n_rows(p) if text else None
     if expected is not None and r != expected:
         return False, f"{r} rows, expected {expected}"
     if manifest is not None:
@@ -229,7 +234,7 @@ def check_file(base, rel, expected, t_start=None, manifest=None):
             return False, "not in results_manifest.csv"
         if sha256(p) != h:
             return False, "SHA-256 differs from results_manifest.csv"
-    return True, f"{r} rows"
+    return True, (f"{r} rows" if text else "present")
 
 
 def _same_numbers(p, q, tol=1e-9):
@@ -282,7 +287,7 @@ def write_manifest(base):
         for rel, _ in s.outputs:
             p = os.path.join(base, rel)
             if os.path.exists(p):
-                rows.append(f"{rel},{s.name},{n_rows(p)},{sha256(p)}")
+                rows.append(f"{rel},{s.name},{n_rows(p) if p.lower().endswith(TEXT_RESULTS) else ''},{sha256(p)}")
             else:
                 print(f"  ! {rel} missing, not in the manifest")
     suite = os.path.join(base, "datasets", "suite")
@@ -500,7 +505,7 @@ def from_scratch(a):
                 rep.append(f"| `{rel}` | absent | | | |"); continue
             origin = "reproduced" if status.get(s.name, ("",))[0] == "REPRODUCED" else "taken from the release"
             h = sha256(p)
-            rep.append(f"| `{rel}` | {origin} | {n_rows(p)} | {h[:12]} | {'yes' if man.get(rel) == h else 'no'} |")
+            rep.append(f"| `{rel}` | {origin} | {n_rows(p) if p.lower().endswith(TEXT_RESULTS) else '-'} | {h[:12]} | {'yes' if man.get(rel) == h else 'no'} |")
     rep += ["", "## Numbers quoted in the paper", f"- {'PASS' if claims_ok else 'FAIL'}: {claims_line}"] + [f"  - {l}" for l in claims_bad]
     rep += ["", "## Tables", f"- identical to the paper's: {len(same)}/{len(ref)}"
             + (f"; different: {', '.join(diff)} (see `diff analysis/tables_paper/<file> {REFERENCE_TABLES}/<file>`)" if diff else "")

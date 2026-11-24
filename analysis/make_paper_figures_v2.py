@@ -252,7 +252,7 @@ def main():
         from scipy.stats import spearmanr
         seeds = [42, 123, 456, 789, 1011]
         E1F = E1F.copy(); E1F["idx"] = E1F.config_id * 5 + E1F.seed.map({s: i for i, s in enumerate(seeds)})
-        prof = E1F.groupby("idx").D_dataset.first(); clas = E1F.groupby("idx").ARI.mean()
+        prof = E1F.groupby("idx").D_dataset.first(); clas = E1F[E1F.algorithm != "DPC"].groupby("idx").ARI.mean()   # pool means leave DPC out
         D = DEEP.copy(); D["idx"] = D.dataset.str.extract(r"dataset_(\d+)_").astype(int)
         dm = D.groupby(["idx", "method"]).agg(ARI=("ARI", "mean"), K=("n_clusters_found", "mean")).reset_index()
         dm["D"] = dm.idx.map(prof)
@@ -261,7 +261,8 @@ def main():
             g = dm[dm.method == m]; c, mk, _ = STYLE[m]
             axes[0].scatter(g.D, g.ARI, s=28, color=c, marker=mk, label=m, alpha=.85, edgecolor="k", lw=.3)
         axes[0].scatter(prof, clas, s=22, marker="x", color="k", label="classical pool, mean (F)", alpha=.6)
-        axes[0].set_xlabel("$D$"); axes[0].set_ylabel("inlier ARI (mean of 5 runs)"); axes[0].legend(frameon=False)
+        axes[0].set_xlabel("$D$"); axes[0].set_ylabel("inlier ARI (mean of 5 runs)")
+        axes[0].legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.17), ncol=4)   # below: the points fill the panel
         g = dm[dm.method == "DipDECK"]
         sc = axes[1].scatter(g.D, g.K, s=34, c=g.idx // 25, cmap="viridis", edgecolor="k", lw=.3)
         axes[1].axhline(5, ls="--", color="k", lw=.8); axes[1].set_xlabel("$D$"); axes[1].set_ylabel("DipDECK $\\hat K$ (mean of 5 runs)")

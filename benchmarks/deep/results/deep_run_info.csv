@@ -1,0 +1,12 @@
+key,value
+script,benchmarks/deep/run_deep_clustering.py
+python,3.12.5
+platform,Windows-10-10.0.19045-SP0
+numpy,2.5.3
+pandas,3.0.5
+scikit-learn,1.9.1
+torch,2.15.0+cpu
+clustpy,0.0.3
+seeds,42 123 456 789 1011
+data_dir,datasets\suite
+started,2026-11-21 19:41:48

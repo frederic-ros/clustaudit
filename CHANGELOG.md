@@ -1,8 +1,42 @@
 # Changelog
 
+## 2.2.2 — 2026-11-24
+
+The version described in the paper. The deep tier is now scored exactly like the
+classical tier, and was re-run.
+
+- `benchmarks/deep/run_deep_clustering.py`: every partition is evaluated by
+  `clustaudit.audit.evaluation.evaluate_partition`, the function of the classical tier.
+  Up to 2.2.1 the deep tier computed its `ARI` on all points with the noise label as a
+  class (the convention called `ARI_full` elsewhere), while the paper described and
+  compared it as the inlier ARI. `ARI` is now the inlier ARI and `ARI_full` the former
+  value; the smallest-cluster F1, the failure mode and the noise columns are added. Every
+  label vector is saved (`results/deep_labels.npz`), as is the embedding each method
+  learned with the first seed (`results/deep_embeddings_seed42.npz`);
+  `results/deep_run_info.csv` records the versions and the platform of the run;
+  `--resume` refuses a result file written by an older version.
+- The deep tier was re-run with this script (Windows 10, Python 3.12.5, torch 2.15.0 CPU,
+  clustpy 0.0.3; 57.6 h of CPU on a shared machine). Its `ARI_full` and its numbers of
+  clusters reproduce the 2.2.1 file exactly, for all 1125 runs. Under the inlier ARI the
+  deep methods score higher on noisy data (IDEC on the hard regime: 0.43 instead of 0.30;
+  DipDECK on the medium regime: 0.90 instead of 0.63), and the association of their ARI
+  with `S_noise`, which the former convention produced, falls (IDEC: Spearman -0.83 ->
+  -0.52); fragmentation becomes their best predictor.
+- `benchmarks/deep/embedding_profile.py` (new step `deep_embedding`, about a minute, core
+  install only): the difficulty profile of every suite dataset in the standardized input
+  and in the representation each deep method learned; result file
+  `results/deep_embedding_profiles.csv`, table `tab_deep_embedding.tex`.
+- `analysis/make_paper_figures_v2.py`: the classical-pool mean of the deep figure leaves
+  DPC out, like every pool mean of the paper; its legend is below the panel.
+- `scripts/reproduce.py`: the deep step declares its new outputs; binary outputs are
+  reported as present, without a row count.
+- `analysis/audit_paper_claims_v2.py`: 267 claims (deep tier updated, 24 added).
+- `results/deep_results_summary.csv`, which the deep script also writes, is not shipped
+  (`.gitignore`).
+
 ## 2.2.1 — 2026-11-21
 
-The version described in the paper. Two fixes, and no result changes: the result files,
+The version described in the paper until 2.2.2. Two fixes, and no result changes: the result files,
 the suite, every table and every number of the paper are those of 2.2.0.
 
 - `analysis/make_paper_figures_v2.py`: figures readable in monochrome print and at the

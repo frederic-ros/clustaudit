@@ -27,7 +27,7 @@ that operational:
 Every result table and data figure of the paper and of its supplement is written by
 a script of this repository from the result files shipped in `benchmarks/*/results/`,
 and every number quoted in the text is re-derived from the same files by
-`analysis/audit_paper_claims_v2.py` (243 checks).
+`analysis/audit_paper_claims_v2.py` (267 checks).
 
 ---
 
@@ -153,7 +153,7 @@ results_manifest.csv        every shipped result file: producing step, rows, SHA
 ## Full reproduction
 
 See `from-scratch` above. The classical experiments take about two hours on a laptop
-(one thread per step), the deep tier about ten hours on CPU, and the real-data tier
+(one thread per step), the deep tier ten to fifteen hours on CPU, and the real-data tier
 downloads 15 datasets from OpenML. Seeds are fixed throughout (42, 123, 456, 789,
 1011). The correspondence between each table of the paper and its script and result
 files is given in Table S21 of the supplementary material and in `analysis/README.md`.
@@ -178,10 +178,11 @@ scikit-learn version, expect these two methods to differ at that scale.
 
 Please cite the paper and the archived release you used (see also `CITATION.cff`):
 
-* release v2.2.1, the version described in the paper:
-  [doi:10.5281/zenodo.24422756](https://doi.org/10.5281/zenodo.24422756);
-* all versions (resolves to the latest):
+* release v2.2.2 is the version described in the paper; the Zenodo record of all
+  versions lists its DOI and resolves to the latest:
   [doi:10.5281/zenodo.24239815](https://doi.org/10.5281/zenodo.24239815);
+* release v2.2.1:
+  [doi:10.5281/zenodo.24422756](https://doi.org/10.5281/zenodo.24422756);
 * release v2.2.0, the first public release:
   [doi:10.5281/zenodo.24239816](https://doi.org/10.5281/zenodo.24239816).
 

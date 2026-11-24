@@ -48,6 +48,7 @@ def main():
     IMBF = load(f"{C}/sweeps_v2/sweep_imbalance_fixed.csv")
     INTF = load(f"{C}/sweeps_v2/sweep_inter_density_fixed.csv")
     DEEP = load("benchmarks/deep/results/deep_results.csv")
+    EMB = load("benchmarks/deep/results/deep_embedding_profiles.csv")
     REAL = load("benchmarks/real-data/results/transfer_results.csv")   # labels as given (not the _relabel file)
     XG = load("benchmarks/cross-generator/results/crossgen_results.csv")
 
@@ -201,12 +202,41 @@ def main():
         E1F["idx"] = E1F.config_id * 5 + E1F.seed.map({s: i for i, s in enumerate(seeds)})
         prof = E1F.groupby("idx").D_dataset.first()
         DEEP["idx"] = DEEP.dataset.str.extract(r"dataset_(\d+)_").astype(int)
-        dm = DEEP.groupby(["idx", "method"]).agg(ARI=("ARI", "mean"), K=("n_clusters_found", "mean")).reset_index()
+        dm = DEEP.groupby(["idx", "method"]).agg(ARI=("ARI", "mean"), ARIf=("ARI_full", "mean"), K=("n_clusters_found", "mean")).reset_index()
         dm["D"] = dm.idx.map(prof)
-        for m, v in [("DipDECK", -0.98), ("IDEC", -0.59), ("DCN", -0.52)]:
+        desc = E1F.groupby("idx").first()
+        # the deep tier is scored like the classical tier: ARI = inlier ARI (ARI_full: noise as a class)
+        claim("deep: runs that raised an error", 0.0, 0.0)(lambda: float((DEEP.status != "ok").sum()))
+        for m, v in [("DipDECK", -0.95), ("IDEC", -0.52), ("DCN", -0.41)]:
             claim(f"deep r(D, ARI) {m}", v)(lambda m=m: pearsonr(dm[dm.method == m].D, dm[dm.method == m].ARI)[0])
+        claim("deep rho(D, ARI) DipDECK", -0.89)(lambda: spearmanr(dm[dm.method == "DipDECK"].D, dm[dm.method == "DipDECK"].ARI).statistic)
         claim("deep rho(D, K) DipDECK", -0.93)(lambda: spearmanr(dm[dm.method == "DipDECK"].D, dm[dm.method == "DipDECK"].K).statistic)
         claim("deep DipDECK K hard", 1.4, 0.1)(lambda: dm[(dm.method == "DipDECK") & (dm.idx >= 50)].K.mean())
+        claim("deep DipDECK: single cluster, share of hard runs", 0.66, 0.005)(lambda: float(
+            (DEEP[DEEP.dataset.str.contains("_hard_") & (DEEP.method == "DipDECK")].n_clusters_found == 1).mean()))
+        for m, v in [("IDEC", 0.24), ("DCN", 0.18)]:
+            claim(f"deep {m}: silent share of hard runs", v, 0.005)(lambda m=m: float(
+                (DEEP[DEEP.dataset.str.contains("_hard_") & (DEEP.method == m)].failure_mode == "silent").mean()))
+        def rho_desc(m, col, ari="ARI"):
+            g = dm[dm.method == m].set_index("idx"); return spearmanr(desc.loc[g.index, col], g[ari]).statistic
+        for m, frag, sn, snf, sil in [("IDEC", -0.64, -0.52, -0.83, -0.39), ("DCN", -0.52, -0.44, -0.77, -0.27)]:
+            claim(f"deep rho(fragmentation, ARI) {m}", frag)(lambda m=m: rho_desc(m, "knn_fragmentation"))
+            claim(f"deep rho(S_noise, ARI) {m}", sn)(lambda m=m: rho_desc(m, "S_noise"))
+            claim(f"deep rho(S_noise, ARI_full) {m}", snf)(lambda m=m: rho_desc(m, "S_noise", "ARIf"))
+            claim(f"deep rho(1-Silhouette, ARI) {m}", sil)(lambda m=m: rho_desc(m, "base_one_minus_silhouette"))
+    if EMB is not None and DEEP is not None:
+        hard = EMB[EMB.dataset.str.contains("_hard_")]
+        for rep_, v in [("input", 0.59), ("IDEC", 0.62), ("DCN", 0.54), ("DipDECK", 0.51)]:
+            claim(f"deep embedding: D hard, {rep_}", v)(lambda rep_=rep_: hard[hard.representation == rep_].D_dataset.mean())
+        claim("deep embedding: fragmentation hard, input", 0.27)(lambda: hard[hard.representation == "input"].knn_fragmentation.mean())
+        a42 = DEEP[DEEP.seed == 42].set_index(["dataset", "method"]).ARI
+        inp = EMB[EMB.representation == "input"].set_index("dataset")
+        def rho_emb(m, own):
+            e = EMB[EMB.representation == m].set_index("dataset"); ari = a42.xs(m, level="method").loc[e.index]
+            return spearmanr((e if own else inp.loc[e.index]).D_dataset, ari).statistic
+        for m, vi, vo in [("IDEC", -0.56, -0.58), ("DCN", -0.47, -0.48), ("DipDECK", -0.91, -0.91)]:
+            claim(f"deep embedding: rho(D, ARI) {m}, input", vi)(lambda m=m: rho_emb(m, False))
+            claim(f"deep embedding: rho(D, ARI) {m}, own representation", vo)(lambda m=m: rho_emb(m, True))
 
     # ---------------- Q4 cross-generator ----------------
     if XG is not None:
@@ -464,7 +494,7 @@ def main():
     # ---------------- run ----------------
     # Every claim must be evaluated: a block whose input file is missing registers fewer claims, and
     # that is a failure, not a smaller denominator. Update EXPECTED_CLAIMS when claims are added.
-    EXPECTED_CLAIMS = 243
+    EXPECTED_CLAIMS = 267
     fails = 0; print(f"{'claim':52s} {'paper':>8s} {'data':>8s}  status")
     if len(CLAIMS) != EXPECTED_CLAIMS:
         print(f"only {len(CLAIMS)} of the {EXPECTED_CLAIMS} claims could be set up: input result files are missing")
