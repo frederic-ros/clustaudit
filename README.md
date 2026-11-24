@@ -156,7 +156,7 @@ See `from-scratch` above. The classical experiments take about two hours on a la
 (one thread per step), the deep tier ten to fifteen hours on CPU, and the real-data tier
 downloads 15 datasets from OpenML. Seeds are fixed throughout (42, 123, 456, 789,
 1011). The correspondence between each table of the paper and its script and result
-files is given in Table S21 of the supplementary material and in `analysis/README.md`.
+files is given in Table S22 of the supplementary material and in `analysis/README.md`.
 
 Every run is recorded. When no configuration of a tuning grid yields an admissible
 partition (protocols S and D), the run is kept as a degenerate output, i.e. a
@@ -178,8 +178,9 @@ scikit-learn version, expect these two methods to differ at that scale.
 
 Please cite the paper and the archived release you used (see also `CITATION.cff`):
 
-* release v2.2.2 is the version described in the paper; the Zenodo record of all
-  versions lists its DOI and resolves to the latest:
+* release v2.2.2, the version described in the paper:
+  [doi:10.5281/zenodo.24490561](https://doi.org/10.5281/zenodo.24490561);
+* all versions (resolves to the latest):
   [doi:10.5281/zenodo.24239815](https://doi.org/10.5281/zenodo.24239815);
 * release v2.2.1:
   [doi:10.5281/zenodo.24422756](https://doi.org/10.5281/zenodo.24422756);
